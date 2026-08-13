@@ -1,5 +1,5 @@
-ARG ERPNEXT_IMAGE=frappe/erpnext:version-16
-FROM ${ERPNEXT_IMAGE}
+ARG ERPNEXT_VERSION=v16.32.0
+FROM frappe/erpnext:${ERPNEXT_VERSION}
 
 USER root
 COPY --chown=frappe:frappe fch_ops /home/frappe/frappe-bench/apps/fch_ops
