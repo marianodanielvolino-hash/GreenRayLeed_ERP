@@ -36,6 +36,10 @@ resource "oci_core_instance" "greenray_vm" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("${path.module}/cloud-init.yaml"))
+    user_data           = base64encode(file("${path.module}/cloud-init-secure.yaml"))
+  }
+
+  instance_options {
+    are_legacy_imds_endpoints_disabled = true
   }
 }
