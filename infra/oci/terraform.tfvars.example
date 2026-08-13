@@ -1,0 +1,16 @@
+tenancy_ocid      = "ocid1.tenancy.oc1..REPLACE"
+compartment_ocid  = "ocid1.compartment.oc1..REPLACE"
+region            = "YOUR_HOME_REGION"
+ssh_allowed_cidr  = "203.0.113.10/32"
+ssh_authorized_key = "ssh-ed25519 AAAA... replace-with-your-public-key"
+acme_email        = "ops@example.com"
+
+# Always Free A1 profile used by this project
+ocpus          = 2
+memory_gb      = 12
+boot_volume_gb = 100
+
+backup_bucket_name      = "greenray-erp-backups"
+backup_retention_days   = 7
+# availability_domain   = ""
+# git_ref               = "main"
