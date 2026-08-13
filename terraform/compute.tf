@@ -36,7 +36,11 @@ resource "oci_core_instance" "greenray_vm" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("${path.module}/cloud-init-secure.yaml"))
+    user_data = base64encode(replace(
+      file("${path.module}/cloud-init-secure.yaml"),
+      "__SSH_ALLOWED_CIDR__",
+      var.ssh_allowed_cidr
+    ))
   }
 
   instance_options {
