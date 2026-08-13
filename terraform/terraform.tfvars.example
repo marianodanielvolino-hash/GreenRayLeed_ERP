@@ -1,0 +1,12 @@
+tenancy_ocid       = "ocid1.tenancy.oc1..REPLACE"
+user_ocid          = "ocid1.user.oc1..REPLACE"
+compartment_ocid   = "ocid1.compartment.oc1..REPLACE"
+fingerprint        = "REPLACE"
+private_key_path   = "~/.oci/oci_api_key.pem"
+region             = "YOUR_HOME_REGION"
+ssh_public_key     = "ssh-ed25519 AAAA..."
+ssh_allowed_cidr   = "203.0.113.10/32"
+instance_ocpus     = 2
+instance_memory_gb = 12
+boot_volume_size_gb = 100
+admin_email        = "ops@example.com"
