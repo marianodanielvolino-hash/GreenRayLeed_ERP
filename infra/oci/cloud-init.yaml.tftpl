@@ -1,0 +1,76 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - git
+  - jq
+  - unzip
+  - fail2ban
+  - python3-venv
+  - openssl
+
+write_files:
+  - path: /usr/local/sbin/greenray-backup
+    permissions: '0750'
+    owner: root:root
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      ROOT=/opt/greenray/GreenRayLeed_ERP
+      ENV_FILE="$ROOT/.env"
+      [ -f "$ENV_FILE" ] || exit 0
+      SITE_NAME=$(awk -F= '$1=="SITE_NAME" {print $2; exit}' "$ENV_FILE")
+      [ -n "$SITE_NAME" ] || exit 0
+      cd "$ROOT"
+      COMPOSE="docker compose -f compose.yaml -f compose.oci.yaml"
+      $COMPOSE exec -T backend bench --site "$SITE_NAME" backup --with-files --compress
+      TMP=$(mktemp --suffix=.tgz)
+      trap 'rm -f "$TMP"' EXIT
+      $COMPOSE exec -T backend bash -lc "tar -C sites/$SITE_NAME/private/backups -czf - ." > "$TMP"
+      STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+      oci os object put --auth instance_principal --namespace-name "${namespace}" --bucket-name "${bucket_name}" --name "backups/$SITE_NAME/$STAMP.tgz" --file "$TMP" --force
+      $COMPOSE exec -T backend bash -lc "find sites/$SITE_NAME/private/backups -type f -mtime +2 -delete"
+
+  - path: /etc/systemd/system/greenray-backup.service
+    permissions: '0644'
+    owner: root:root
+    content: |
+      [Unit]
+      Description=GreenRay ERP daily off-site backup
+      Wants=docker.service
+      After=docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/sbin/greenray-backup
+
+  - path: /etc/systemd/system/greenray-backup.timer
+    permissions: '0644'
+    owner: root:root
+    content: |
+      [Unit]
+      Description=Run GreenRay ERP backup daily
+
+      [Timer]
+      OnCalendar=*-*-* 06:15:00 UTC
+      Persistent=true
+      RandomizedDelaySec=300
+
+      [Install]
+      WantedBy=timers.target
+
+runcmd:
+  - [ bash, -lc, 'if ! swapon --show | grep -q /swapfile; then fallocate -l 4G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo "/swapfile none swap sw 0 0" >> /etc/fstab; fi' ]
+  - [ bash, -lc, 'install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && chmod a+r /etc/apt/keyrings/docker.asc' ]
+  - [ bash, -lc, 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list' ]
+  - [ bash, -lc, 'apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin' ]
+  - [ bash, -lc, 'usermod -aG docker ubuntu && systemctl enable --now docker fail2ban' ]
+  - [ bash, -lc, 'python3 -m venv /opt/oci-cli && /opt/oci-cli/bin/pip install --upgrade pip oci-cli && ln -sf /opt/oci-cli/bin/oci /usr/local/bin/oci' ]
+  - [ bash, -lc, 'mkdir -p /opt/greenray && chown ubuntu:ubuntu /opt/greenray' ]
+  - [ bash, -lc, 'if [ ! -d /opt/greenray/GreenRayLeed_ERP/.git ]; then sudo -u ubuntu git clone "${git_repo_url}" /opt/greenray/GreenRayLeed_ERP; fi' ]
+  - [ bash, -lc, 'cd /opt/greenray/GreenRayLeed_ERP && sudo -u ubuntu git fetch --all --tags && sudo -u ubuntu git checkout "${git_ref}"' ]
+  - [ bash, -lc, 'systemctl daemon-reload && systemctl enable --now greenray-backup.timer' ]
+  - [ bash, -lc, 'touch /var/lib/greenray-cloud-init-complete' ]
