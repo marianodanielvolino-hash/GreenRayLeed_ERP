@@ -5,6 +5,7 @@ variable "availability_domain" { type = string default = "" }
 variable "instance_name" { type = string default = "greenray-erp" }
 variable "acme_email" { type = string }
 variable "ssh_allowed_cidr" { type = string }
+variable "ssh_authorized_key" { type = string }
 
 variable "ocpus" {
   type = number
