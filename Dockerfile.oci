@@ -3,8 +3,8 @@ FROM frappe/erpnext:${ERPNEXT_VERSION}
 ARG HRMS_VERSION=v16.16.0
 ARG CRM_VERSION=v1.81.2
 USER frappe
-RUN bench get-app --branch "${HRMS_VERSION}" hrms
-RUN bench get-app --branch "${CRM_VERSION}" crm
+RUN bench get-app --branch "${HRMS_VERSION}" https://github.com/frappe/hrms.git
+RUN bench get-app --branch "${CRM_VERSION}" https://github.com/frappe/crm.git
 USER root
 COPY --chown=frappe:frappe fch_ops /home/frappe/frappe-bench/apps/fch_ops
 USER frappe
