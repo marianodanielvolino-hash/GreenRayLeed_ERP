@@ -1,0 +1,233 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "creation": "2026-08-12 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "contract_title",
+  "company",
+  "counterparty_type",
+  "customer",
+  "supplier",
+  "other_counterparty",
+  "country",
+  "contract_type",
+  "owner_user",
+  "approver",
+  "effective_date",
+  "expiration_date",
+  "auto_renewal",
+  "notice_period_days",
+  "payment_condition",
+  "sla",
+  "currency",
+  "contract_value",
+  "drive_url",
+  "fch_case",
+  "risk",
+  "status",
+  "next_alert_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "contract_title",
+   "fieldtype": "Data",
+   "label": "Contract",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "counterparty_type",
+   "fieldtype": "Select",
+   "label": "Counterparty Type",
+   "options": "Customer\nSupplier\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "depends_on": "eval:doc.counterparty_type=='Customer'"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "depends_on": "eval:doc.counterparty_type=='Supplier'"
+  },
+  {
+   "fieldname": "other_counterparty",
+   "fieldtype": "Data",
+   "label": "Other Counterparty",
+   "depends_on": "eval:doc.counterparty_type=='Other'"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "contract_type",
+   "fieldtype": "Data",
+   "label": "Type"
+  },
+  {
+   "fieldname": "owner_user",
+   "fieldtype": "Link",
+   "label": "Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "approver",
+   "fieldtype": "Link",
+   "label": "Approver",
+   "options": "User"
+  },
+  {
+   "fieldname": "effective_date",
+   "fieldtype": "Date",
+   "label": "Effective Date"
+  },
+  {
+   "fieldname": "expiration_date",
+   "fieldtype": "Date",
+   "label": "Expiration Date",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "auto_renewal",
+   "fieldtype": "Check",
+   "label": "Auto Renewal"
+  },
+  {
+   "fieldname": "notice_period_days",
+   "fieldtype": "Int",
+   "label": "Notice Period (days)"
+  },
+  {
+   "fieldname": "payment_condition",
+   "fieldtype": "Small Text",
+   "label": "Payment Condition"
+  },
+  {
+   "fieldname": "sla",
+   "fieldtype": "Small Text",
+   "label": "SLA"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "default": "USD"
+  },
+  {
+   "fieldname": "contract_value",
+   "fieldtype": "Currency",
+   "label": "Value",
+   "options": "currency"
+  },
+  {
+   "fieldname": "drive_url",
+   "fieldtype": "Data",
+   "label": "Drive URL"
+  },
+  {
+   "fieldname": "fch_case",
+   "fieldtype": "Link",
+   "label": "FCH Case",
+   "options": "FCH Case"
+  },
+  {
+   "fieldname": "risk",
+   "fieldtype": "Select",
+   "label": "Risk",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "default": "Medium"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nActive\nRenewal Due\nExpired\nTerminated",
+   "default": "Pending",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "next_alert_date",
+   "fieldtype": "Date",
+   "label": "Next Alert Date",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 0,
+ "issingle": 0,
+ "links": [],
+ "modified": "2026-08-12 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FCH Ops",
+ "name": "FCH Contract Register",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "System Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH CEO"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH PMO"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Finance Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Country Manager"
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "FCH Auditor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "format:FCH-CON-{YYYY}-{#####}",
+ "title_field": "contract_title"
+}

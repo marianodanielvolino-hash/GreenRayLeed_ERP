@@ -1,0 +1,292 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "creation": "2026-08-12 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "shipment_id",
+  "status",
+  "company",
+  "market",
+  "origin_country",
+  "destination_country",
+  "supplier",
+  "purchase_order",
+  "landed_cost_voucher",
+  "forwarder",
+  "transport_mode",
+  "incoterm",
+  "etd",
+  "eta",
+  "actual_arrival",
+  "currency",
+  "goods_value",
+  "international_freight",
+  "insurance",
+  "duty",
+  "customs",
+  "local_freight",
+  "other_costs",
+  "landed_cost",
+  "customs_status",
+  "compliance_gate",
+  "documents_url",
+  "owner_user",
+  "next_action",
+  "next_action_date",
+  "fch_case"
+ ],
+ "fields": [
+  {
+   "fieldname": "shipment_id",
+   "fieldtype": "Data",
+   "label": "Shipment ID",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Planned\nBooked\nIn Transit\nAt Customs\nReceived\nClosed\nCancelled",
+   "default": "Planned",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company Owner / Importer",
+   "options": "Company",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "market",
+   "fieldtype": "Link",
+   "label": "Market",
+   "options": "FCH Market",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "origin_country",
+   "fieldtype": "Link",
+   "label": "Origin Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "destination_country",
+   "fieldtype": "Link",
+   "label": "Destination Country",
+   "options": "Country",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order"
+  },
+  {
+   "fieldname": "landed_cost_voucher",
+   "fieldtype": "Link",
+   "label": "Landed Cost Voucher",
+   "options": "Landed Cost Voucher"
+  },
+  {
+   "fieldname": "forwarder",
+   "fieldtype": "Data",
+   "label": "Forwarder"
+  },
+  {
+   "fieldname": "transport_mode",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "Air\nSea\nRoad\nCourier\nOther"
+  },
+  {
+   "fieldname": "incoterm",
+   "fieldtype": "Data",
+   "label": "Incoterm"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "label": "ETD"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "actual_arrival",
+   "fieldtype": "Date",
+   "label": "Actual Arrival"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "default": "USD",
+   "reqd": 1
+  },
+  {
+   "fieldname": "goods_value",
+   "fieldtype": "Currency",
+   "label": "FOB / EXW Value",
+   "options": "currency"
+  },
+  {
+   "fieldname": "international_freight",
+   "fieldtype": "Currency",
+   "label": "International Freight",
+   "options": "currency"
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Currency",
+   "label": "Insurance",
+   "options": "currency"
+  },
+  {
+   "fieldname": "duty",
+   "fieldtype": "Currency",
+   "label": "Duty",
+   "options": "currency"
+  },
+  {
+   "fieldname": "customs",
+   "fieldtype": "Currency",
+   "label": "Customs / Broker",
+   "options": "currency"
+  },
+  {
+   "fieldname": "local_freight",
+   "fieldtype": "Currency",
+   "label": "Local Freight",
+   "options": "currency"
+  },
+  {
+   "fieldname": "other_costs",
+   "fieldtype": "Currency",
+   "label": "Other Costs",
+   "options": "currency"
+  },
+  {
+   "fieldname": "landed_cost",
+   "fieldtype": "Currency",
+   "label": "Operational Landed Cost",
+   "options": "currency",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customs_status",
+   "fieldtype": "Select",
+   "label": "Customs Status",
+   "options": "Pending\nIn Transit\nAt Customs\nReleased\nReceived\nCancelled",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "compliance_gate",
+   "fieldtype": "Select",
+   "label": "Compliance Gate",
+   "options": "Pending\nGO\nNO GO",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "documents_url",
+   "fieldtype": "Data",
+   "label": "Documents / Drive URL"
+  },
+  {
+   "fieldname": "owner_user",
+   "fieldtype": "Link",
+   "label": "Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "next_action",
+   "fieldtype": "Small Text",
+   "label": "Next Action"
+  },
+  {
+   "fieldname": "next_action_date",
+   "fieldtype": "Date",
+   "label": "Next Action Date"
+  },
+  {
+   "fieldname": "fch_case",
+   "fieldtype": "Link",
+   "label": "FCH Case",
+   "options": "FCH Case"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 0,
+ "issingle": 0,
+ "links": [],
+ "modified": "2026-08-12 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FCH Ops",
+ "name": "FCH Import Operation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "System Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH COMEX"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Supply"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Purchasing"
+  },
+  {
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Finance Manager"
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "FCH Auditor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "field:shipment_id",
+ "title_field": "shipment_id"
+}

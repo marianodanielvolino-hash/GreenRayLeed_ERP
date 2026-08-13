@@ -1,34 +1,56 @@
 # GreenRay ERPNext
 
-Base de implementación del ERP regional de GreenRay sobre **ERPNext v16 + Frappe + `fch_ops`**.
+Regional GreenRay ERP built on **ERPNext v16 + Frappe Framework + `fch_ops`**.
 
-## Para Antigravity
+This repository is deployment-ready for local/UAT Docker environments and intentionally prepared for agent-assisted operation with **Google Antigravity**.
 
-Abrir este repositorio como proyecto y pedirle:
+## Scope
 
-> Leé `AGENTS.md` y `docs/BUILD_SPEC.md`. Completá/validá la app `fch_ops` sin modificar el core de ERPNext. Después ejecutá `scripts/validate.sh`, configurá `.env` desde `.env.example` y desplegá con `scripts/deploy.sh`. Verificá el sitio y reportá cualquier error antes de cambiar arquitectura.
+The custom `fch_ops` app implements the GreenRay operating model on top of ERPNext without modifying ERPNext core:
 
-## Arranque
+- Company != Market
+- regional multi-company model
+- global SKU + local/provider mapping
+- five sales gates (Commercial, Stock, Compliance, Finance, Logistics)
+- import/landed-cost tracking
+- compliance by SKU and destination country
+- collections with next action
+- CASE-ID and Decision Log
+- contracts and expirations
+
+## Quick start
 
 ```bash
 cp .env.example .env
-# completar DB_PASSWORD y ADMIN_PASSWORD
-./scripts/validate.sh
+# Replace CHANGE_ME values
 ./scripts/deploy.sh
+./scripts/healthcheck.sh
 ```
 
-URL local esperada: `http://localhost:8080`
+Windows PowerShell:
 
-## Principios
+```powershell
+Copy-Item .env.example .env
+# Edit .env
+powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1
+```
 
-- Company es razón social; Market es una dimensión diferente.
-- El propietario legal del stock y su ubicación física se modelan por separado.
-- Un SKU maestro global; códigos locales/proveedor son mappings.
-- Sales Order tiene 5 gates: Comercial, Stock, Compliance, Finanzas y Logística.
-- Un `NO GO` obligatorio bloquea la promesa/confirmación al cliente.
-- Toda lógica propia de GreenRay vive en `fch_ops`; no se modifica ERPNext core.
-- No versionar secretos, saldos reales ni información fiscal no validada.
+Then open `http://localhost:8080`.
 
-## Estado
+## Antigravity
 
-El repositorio contiene Docker Compose, Dockerfile, plantilla de entorno, scripts de bootstrap/validación/deploy y la especificación funcional de GreenRay. Antes del primer deploy productivo, Antigravity debe completar y probar el modelo `fch_ops` definido en `docs/BUILD_SPEC.md`.
+Open this Git repository as an Antigravity Project. The agent receives repository-specific instructions from `AGENTS.md` and `.agents/rules/`, and can execute the included `/deploy-greenray` workflow.
+
+See `docs/ANTIGRAVITY.md`.
+
+## Safety
+
+Do not commit `.env`, credentials, customer data, database dumps or production backups. Do not invent tax IDs, opening balances or fiscal configurations. Country fiscal configuration requires local validation before go-live.
+
+## Documentation
+
+- `AGENTS.md` — mandatory engineering constraints
+- `docs/ARCHITECTURE.md` — target architecture
+- `docs/DEPLOYMENT.md` — deployment/runbook
+- `fch_ops/docs/blueprint_greenray.md` — full business blueprint
+- `fch_ops/TEST_PLAN.md` — functional test plan

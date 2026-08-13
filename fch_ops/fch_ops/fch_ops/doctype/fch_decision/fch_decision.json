@@ -1,0 +1,188 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "creation": "2026-08-12 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "case",
+  "company",
+  "market",
+  "topic",
+  "status",
+  "situation",
+  "proposed_action",
+  "currency",
+  "financial_impact",
+  "operational_impact",
+  "risk",
+  "decision_maker",
+  "decision",
+  "decision_date",
+  "due_date",
+  "owner_user",
+  "evidence_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "case",
+   "fieldtype": "Link",
+   "label": "Case",
+   "options": "FCH Case",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "market",
+   "fieldtype": "Link",
+   "label": "Market",
+   "options": "FCH Market"
+  },
+  {
+   "fieldname": "topic",
+   "fieldtype": "Data",
+   "label": "Topic",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nPending\nDecided\nImplemented\nCancelled",
+   "default": "Pending",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "situation",
+   "fieldtype": "Long Text",
+   "label": "Situation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "proposed_action",
+   "fieldtype": "Long Text",
+   "label": "Proposed Action"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "default": "USD"
+  },
+  {
+   "fieldname": "financial_impact",
+   "fieldtype": "Currency",
+   "label": "Financial Impact",
+   "options": "currency"
+  },
+  {
+   "fieldname": "operational_impact",
+   "fieldtype": "Long Text",
+   "label": "Operational Impact"
+  },
+  {
+   "fieldname": "risk",
+   "fieldtype": "Select",
+   "label": "Risk",
+   "options": "Low\nMedium\nHigh\nCritical",
+   "default": "Medium"
+  },
+  {
+   "fieldname": "decision_maker",
+   "fieldtype": "Link",
+   "label": "Decision Maker",
+   "options": "User"
+  },
+  {
+   "fieldname": "decision",
+   "fieldtype": "Long Text",
+   "label": "Decision"
+  },
+  {
+   "fieldname": "decision_date",
+   "fieldtype": "Date",
+   "label": "Decision Date"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date"
+  },
+  {
+   "fieldname": "owner_user",
+   "fieldtype": "Link",
+   "label": "Owner",
+   "options": "User"
+  },
+  {
+   "fieldname": "evidence_url",
+   "fieldtype": "Data",
+   "label": "Evidence / Drive URL"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 0,
+ "issingle": 0,
+ "links": [],
+ "modified": "2026-08-12 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FCH Ops",
+ "name": "FCH Decision",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "System Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH CEO"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH PMO"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Finance Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Country Manager"
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "FCH Auditor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "format:FCH-DEC-{YYYY}-{#####}",
+ "title_field": "topic"
+}

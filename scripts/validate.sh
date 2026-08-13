@@ -72,3 +72,5 @@ if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; 
 else
   echo "Docker unavailable: skipped docker compose runtime validation"
 fi
+
+echo "=== ALL VALIDATIONS PASSED ==="

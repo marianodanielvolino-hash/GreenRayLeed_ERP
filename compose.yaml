@@ -86,9 +86,18 @@ services:
         fi
         if ! bench --site "$${SITE_NAME}" list-apps | grep -qx 'fch_ops'; then
           bench --site "$${SITE_NAME}" install-app fch_ops
+        else
+          echo "El sitio $${SITE_NAME} ya existe. Verificando aplicaciones."
+          if ! bench --site "$${SITE_NAME}" list-apps | grep -q '^erpnext'; then
+            bench --site "$${SITE_NAME}" install-app erpnext
+          fi
+          if ! bench --site "$${SITE_NAME}" list-apps | grep -q '^fch_ops'; then
+            bench --site "$${SITE_NAME}" install-app fch_ops
+          fi
         fi
         bench --site "$${SITE_NAME}" migrate
         bench use "$${SITE_NAME}"
+        echo "GreenRay ERP listo."
     depends_on:
       configurator:
         condition: service_completed_successfully

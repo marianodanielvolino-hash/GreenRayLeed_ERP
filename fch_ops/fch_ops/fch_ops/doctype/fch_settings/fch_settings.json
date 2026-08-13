@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "allow_import": 0,
+ "creation": "2026-08-12 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enforce_five_gates",
+  "default_minimum_margin_percent"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enforce_five_gates",
+   "fieldtype": "Check",
+   "label": "Enforce Five Sales Gates on Sales Order"
+  },
+  {
+   "default": "25.0",
+   "fieldname": "default_minimum_margin_percent",
+   "fieldtype": "Percent",
+   "label": "Default Minimum Margin %"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "issingle": 1,
+ "istable": 0,
+ "links": [],
+ "modified": "2026-08-12 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FCH Ops",
+ "name": "FCH Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "All"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

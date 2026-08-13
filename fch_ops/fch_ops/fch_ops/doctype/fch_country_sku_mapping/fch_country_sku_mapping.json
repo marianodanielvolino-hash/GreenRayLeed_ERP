@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "creation": "2026-08-12 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "country",
+  "local_sku",
+  "supplier_sku",
+  "barcode",
+  "allowed",
+  "local_description",
+  "certification_status",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Global SKU",
+   "options": "Item",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "local_sku",
+   "fieldtype": "Data",
+   "label": "Local SKU",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "supplier_sku",
+   "fieldtype": "Data",
+   "label": "Supplier SKU"
+  },
+  {
+   "fieldname": "barcode",
+   "fieldtype": "Data",
+   "label": "EAN / Barcode"
+  },
+  {
+   "fieldname": "allowed",
+   "fieldtype": "Check",
+   "label": "Allowed",
+   "default": "1",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "local_description",
+   "fieldtype": "Data",
+   "label": "Local Description"
+  },
+  {
+   "fieldname": "certification_status",
+   "fieldtype": "Select",
+   "label": "Certification Status",
+   "options": "Not Required\nPending\nApproved\nExpired",
+   "default": "Pending"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 0,
+ "issingle": 0,
+ "links": [],
+ "modified": "2026-08-12 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FCH Ops",
+ "name": "FCH Country SKU Mapping",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "System Manager"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Supply"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH Purchasing"
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "write": 1,
+   "report": 1,
+   "role": "FCH COMEX"
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "FCH Sales Manager"
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "FCH Auditor"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "format:FCH-SKU-{YYYY}-{#####}",
+ "title_field": "local_sku"
+}
