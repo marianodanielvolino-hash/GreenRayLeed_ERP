@@ -31,9 +31,8 @@ echo "Starting GreenRay ERP..."
 docker compose up -d --remove-orphans
 
 docker compose ps
-./scripts/healthcheck.sh
 
 PORT="$(getenv HTTP_PORT)"
 PORT="${PORT:-8080}"
-printf '\nGreenRay ERP is available at http://localhost:%s\n' "$PORT"
-printf 'For a VPS, publish it behind HTTPS/reverse proxy before production use.\n'
+printf '\nGreenRay ERP started at http://localhost:%s\n' "$PORT"
+printf 'Verify the create-site container completed and run bench list-apps before production use.\n'
