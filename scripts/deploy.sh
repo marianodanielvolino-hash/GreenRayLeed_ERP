@@ -7,7 +7,7 @@ command -v docker >/dev/null 2>&1 || { echo "ERROR: Docker is not installed." >&
 docker compose version >/dev/null 2>&1 || { echo "ERROR: Docker Compose v2 is required." >&2; exit 1; }
 
 if [[ ! -f fch_ops/pyproject.toml ]]; then
-  ./scripts/bootstrap-source.sh
+  bash scripts/bootstrap-source.sh
 fi
 
 if [[ ! -f .env ]]; then
@@ -22,7 +22,7 @@ ADMIN_PASSWORD_VALUE="$(getenv ADMIN_PASSWORD)"
 [[ -n "$DB_PASSWORD_VALUE" ]] || { echo "ERROR: DB_PASSWORD is empty." >&2; exit 2; }
 [[ -n "$ADMIN_PASSWORD_VALUE" ]] || { echo "ERROR: ADMIN_PASSWORD is empty." >&2; exit 2; }
 
-./scripts/validate.sh
+bash scripts/validate.sh
 
 echo "Building GreenRay ERP image..."
 docker compose build --pull
