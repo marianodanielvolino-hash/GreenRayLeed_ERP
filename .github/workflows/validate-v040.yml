@@ -13,6 +13,6 @@ jobs:
         with:
           python-version: '3.14'
       - name: Reconstruct fch_ops
-        run: ./scripts/bootstrap-source.sh
+        run: bash scripts/bootstrap-source.sh
       - name: Validate GreenRay ERP
-        run: ./scripts/validate.sh
+        run: bash scripts/validate.sh
