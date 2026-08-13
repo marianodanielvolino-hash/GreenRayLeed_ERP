@@ -1,0 +1,66 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - git
+  - iptables
+  - iptables-persistent
+  - fail2ban
+  - docker.io
+  - docker-compose-v2
+  - cron
+
+runcmd:
+  # 1. Swap configuration (4 GB)
+  - fallocate -l 4G /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=4096
+  - chmod 600 /swapfile
+  - mkswap /swapfile
+  - swapon /swapfile
+  - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  - sysctl vm.swappiness=10
+  - echo 'vm.swappiness=10' >> /etc/sysctl.conf
+
+  # 2. Firewall / IPTables configuration
+  - iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+  - iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+  - iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
+  - netfilter-persistent save
+
+  # 3. Enable Services
+  - systemctl enable --now docker
+  - systemctl enable --now fail2ban
+
+  # 4. Clone ERP Repository
+  - mkdir -p /opt/greenray
+  - git clone https://github.com/marianodanielvolino-hash/GreenRayLeed_ERP.git /opt/greenray
+  - cd /opt/greenray
+
+  # 5. Create .env from template
+  - cp .env.example .env
+  - PUBLIC_IP=$(curl -s https://api.ipify.org)
+  - SSLIP_DOMAIN="erp-${PUBLIC_IP//./-}.sslip.io"
+  - sed -i "s/SITE_NAME=.*/SITE_NAME=${SSLIP_DOMAIN}/g" .env
+  - sed -i "s/CHANGE_ME_DB_PASSWORD/GreenRayDBSecret2026!/g" .env
+  - sed -i "s/CHANGE_ME_ADMIN_PASSWORD/GreenRayAdminSecret2026!/g" .env
+
+  # 6. Configure Off-site Backup Script
+  - mkdir -p /opt/greenray/scripts
+  - cat << 'EOF' > /opt/greenray/scripts/backup_offsite.sh
+#!/usr/bin/env bash
+set -euo pipefail
+BACKUP_DIR="/opt/greenray/backups"
+mkdir -p "$BACKUP_DIR"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+BACKUP_FILE="${BACKUP_DIR}/greenray_db_${TIMESTAMP}.sql.gz"
+echo "Creating backup ${BACKUP_FILE}..."
+docker compose exec -T db mysqldump -u root --all-databases | gzip > "$BACKUP_FILE"
+find "$BACKUP_DIR" -type f -mtime +7 -name "*.sql.gz" -delete
+EOF
+  - chmod +x /opt/greenray/scripts/backup_offsite.sh
+  - echo "0 2 * * * root /opt/greenray/scripts/backup_offsite.sh >> /var/log/greenray_backup.log 2>&1" > /etc/cron.d/greenray-backup
+
+  # 7. Build and start stack
+  - docker compose build --pull || true
+  - docker compose up -d
