@@ -1,0 +1,143 @@
+name: greenray
+
+x-greenray-image: &greenray_image
+  image: greenray-erp:${GREENRAY_TAG:-local}
+  pull_policy: never
+
+x-backend: &backend
+  <<: *greenray_image
+  volumes:
+    - sites:/home/frappe/frappe-bench/sites
+  restart: unless-stopped
+
+services:
+  db:
+    image: mariadb:11.8
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - db-data:/var/lib/mysql
+
+  redis-cache:
+    image: redis:8.6-alpine
+    restart: unless-stopped
+
+  redis-queue:
+    image: redis:8.6-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-queue-data:/data
+
+  configurator:
+    <<: *greenray_image
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+    entrypoint: ["bash", "-c"]
+    command:
+      - >
+        ls -1 apps > sites/apps.txt;
+        bench set-config -g db_host db;
+        bench set-config -gp db_port 3306;
+        bench set-config -g redis_cache "redis://redis-cache:6379";
+        bench set-config -g redis_queue "redis://redis-queue:6379";
+        bench set-config -g redis_socketio "redis://redis-queue:6379";
+        bench set-config -gp socketio_port 9000;
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
+    restart: "no"
+
+  create-site:
+    <<: *greenray_image
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+    entrypoint: ["bash", "-c"]
+    environment:
+      SITE_NAME: ${SITE_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    command:
+      - |
+        set -e
+        if [ ! -f "sites/$${SITE_NAME}/site_config.json" ]; then
+          bench new-site "$${SITE_NAME}" --db-root-password "$${DB_PASSWORD}" --admin-password "$${ADMIN_PASSWORD}" --mariadb-user-host-login-scope='172.%.%.%'
+          bench --site "$${SITE_NAME}" install-app erpnext
+          bench --site "$${SITE_NAME}" install-app fch_ops
+        fi
+        bench --site "$${SITE_NAME}" migrate
+        bench use "$${SITE_NAME}"
+    depends_on:
+      configurator:
+        condition: service_completed_successfully
+    restart: "no"
+
+  backend:
+    <<: *backend
+    environment:
+      GUNICORN_THREADS: ${GUNICORN_THREADS:-4}
+      GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
+      GUNICORN_TIMEOUT: ${GUNICORN_TIMEOUT:-120}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
+
+  websocket:
+    <<: *backend
+    command: ["node", "/home/frappe/frappe-bench/apps/frappe/socketio.js"]
+
+  queue-short:
+    <<: *backend
+    command: ["bench", "worker", "--queue", "short,default"]
+
+  queue-long:
+    <<: *backend
+    command: ["bench", "worker", "--queue", "long,default,short"]
+
+  scheduler:
+    <<: *backend
+    command: ["bench", "schedule"]
+
+  frontend:
+    <<: *greenray_image
+    command: ["nginx-entrypoint.sh"]
+    environment:
+      BACKEND: backend:8000
+      SOCKETIO: websocket:9000
+      FRAPPE_SITE_NAME_HEADER: ${SITE_NAME}
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+    ports:
+      - "${HTTP_PORT:-8080}:8080"
+    depends_on:
+      create-site:
+        condition: service_completed_successfully
+      backend:
+        condition: service_started
+      websocket:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  sites:
+  db-data:
+  redis-queue-data:
