@@ -38,7 +38,7 @@ resource "oci_core_security_list" "greenray_sl" {
   # Ingress: SSH (22)
   ingress_security_rules {
     protocol = "6" # TCP
-    source   = "0.0.0.0/0"
+    source   = var.ssh_allowed_cidr
     tcp_options {
       min = 22
       max = 22

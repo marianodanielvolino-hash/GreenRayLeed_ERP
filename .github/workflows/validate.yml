@@ -14,4 +14,4 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate JSON and Python syntax
-        run: ./scripts/validate.sh
+        run: bash ./scripts/validate.sh

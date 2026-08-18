@@ -3,7 +3,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-python3 - <<'PY'
+if command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
+  python3 - <<'PY'
 import json, pathlib, sys
 root = pathlib.Path('.')
 errors = []
@@ -65,6 +66,24 @@ if errors:
     sys.exit(1)
 print('Static validation: OK')
 PY
+elif command -v node >/dev/null 2>&1; then
+  node -e "
+    const fs = require('fs');
+    const path = require('path');
+    function walk(dir) {
+      for (const f of fs.readdirSync(dir)) {
+        const p = path.join(dir, f);
+        if (fs.statSync(p).isDirectory()) walk(p);
+        else if (p.endsWith('.json')) {
+          try { JSON.parse(fs.readFileSync(p, 'utf8')); }
+          catch (e) { console.error('Invalid JSON:', p, e.message); process.exit(1); }
+        }
+      }
+    }
+    walk('fch_ops');
+    console.log('Static validation (Node JS): OK');
+  "
+fi
 
 if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
   docker compose --env-file .env.example config >/dev/null
