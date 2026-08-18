@@ -1,0 +1,8 @@
+aws_region          = "us-east-1"
+aws_access_key      = "AKIA..."
+aws_secret_key      = "..."
+instance_type       = "t4g.medium"
+root_volume_size_gb = 50
+ssh_public_key      = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWAdxVxk+U79VgolfCI2S+vEqSbKP4zcW/c0l0SLJVU mariano volino@LAPTOP-L3R8GACD"
+ssh_allowed_cidr    = "181.87.170.203/32"
+admin_email         = "ops@greenrayleed.com"
