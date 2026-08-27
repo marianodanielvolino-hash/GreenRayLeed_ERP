@@ -1,56 +1,44 @@
-# GreenRay ERPNext
+# GreenRay ERP — `fch_ops`
 
-Regional GreenRay ERP built on **ERPNext v16 + Frappe Framework + `fch_ops`**.
+Aplicación propia para extender ERPNext v16 sin modificar el core.
 
-This repository is deployment-ready for local/UAT Docker environments and intentionally prepared for agent-assisted operation with **Google Antigravity**.
+## Alcance incluido
 
-## Scope
+- Modelo regional Company ≠ Market.
+- CASE-ID (`FCH Case`) y Decision Log (`FCH Decision`).
+- Five Gate Engine para Sales Order: Comercial, Stock, Compliance, Finanzas y Logística.
+- Compliance por SKU + país.
+- Operaciones de importación / COMEX y landed cost operativo.
+- Registro de contratos y alertas de vencimiento.
+- Mapping SKU global ↔ SKU local/proveedor por país.
+- Gestión de cobranzas con próxima acción.
+- Campos técnicos para productos LED.
+- Campos operativos para cotizaciones, compras, depósitos y proyectos.
+- Accounting Dimension `FCH Market`.
+- Workspace `FCH Ops`.
 
-The custom `fch_ops` app implements the GreenRay operating model on top of ERPNext without modifying ERPNext core:
+## Base soportada
 
-- Company != Market
-- regional multi-company model
-- global SKU + local/provider mapping
-- five sales gates (Commercial, Stock, Compliance, Finance, Logistics)
-- import/landed-cost tracking
-- compliance by SKU and destination country
-- collections with next action
-- CASE-ID and Decision Log
-- contracts and expirations
+- ERPNext: rama `version-16`, fijar siempre una release estable.
+- Frappe: >=16.21.0,<17.0.0.
+- Python: >=3.14.
 
-## Quick start
+## Instalación sobre un bench existente
 
 ```bash
-cp .env.example .env
-# Replace CHANGE_ME values
-./scripts/deploy.sh
-./scripts/healthcheck.sh
+cd ~/frappe-bench
+bench get-app /ruta/al/repositorio/fch_ops
+bench --site <sitio> install-app fch_ops
+bench --site <sitio> migrate
+bench restart
 ```
 
-Windows PowerShell:
+La app crea roles, mercados, la dimensión contable `FCH Market`, campos personalizados y configuraciones base de manera idempotente.
 
-```powershell
-Copy-Item .env.example .env
-# Edit .env
-powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1
-```
+## Importante sobre las compañías
 
-Then open `http://localhost:8080`.
+El blueprint define siete sociedades, pero faltan datos legales/fiscales y planes de cuentas definitivos. Por seguridad, la app **no crea automáticamente las Company**. Se incluye `data/companies_seed.csv` con la estructura propuesta para cargarlas cuando se confirme cada alta.
 
-## Antigravity
+## Datos aún pendientes de migración
 
-Open this Git repository as an Antigravity Project. The agent receives repository-specific instructions from `AGENTS.md` and `.agents/rules/`, and can execute the included `/deploy-greenray` workflow.
-
-See `docs/ANTIGRAVITY.md`.
-
-## Safety
-
-Do not commit `.env`, credentials, customer data, database dumps or production backups. Do not invent tax IDs, opening balances or fiscal configurations. Country fiscal configuration requires local validation before go-live.
-
-## Documentation
-
-- `AGENTS.md` — mandatory engineering constraints
-- `docs/ARCHITECTURE.md` — target architecture
-- `docs/DEPLOYMENT.md` — deployment/runbook
-- `fch_ops/docs/blueprint_greenray.md` — full business blueprint
-- `fch_ops/TEST_PLAN.md` — functional test plan
+Las plantillas CSV están en `data/templates/` y cubren productos, clientes, proveedores, stock, cotizaciones/pedidos abiertos, compras, embarques, CxC y CxP.

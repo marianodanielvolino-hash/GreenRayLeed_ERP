@@ -1,6 +1,0 @@
-*.zip
-.git
-__pycache__
-*.pyc
-fch_ops/docs
-fch_ops/data/templates

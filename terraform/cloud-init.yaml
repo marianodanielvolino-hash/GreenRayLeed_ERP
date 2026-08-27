@@ -1,3 +1,0 @@
-# Deprecated legacy cloud-init.
-# Intentionally empty: terraform/compute.tf uses cloud-init-secure.yaml.
-# Do not add credentials or deployment logic to this file.

@@ -1,1 +1,0 @@
-The OCI VM uploads ERP backups with Instance Principal. No OCI API private key is copied to the VM. The dynamic-group policy in iam.tf is scoped to the GreenRay backup bucket.
