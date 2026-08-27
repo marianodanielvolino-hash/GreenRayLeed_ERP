@@ -1,0 +1,17 @@
+{
+ "doctype": "DocType",
+ "name": "FCH Import Receipt",
+ "module": "FCH Ops",
+ "istable": 1,
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": ["purchase_receipt", "posting_date", "supplier", "grand_total"],
+ "fields": [
+  {"fieldname":"purchase_receipt","fieldtype":"Link","options":"Purchase Receipt","label":"Purchase Receipt","reqd":1,"in_list_view":1},
+  {"fieldname":"posting_date","fieldtype":"Date","label":"Posting Date","read_only":1,"in_list_view":1},
+  {"fieldname":"supplier","fieldtype":"Link","options":"Supplier","label":"Supplier","read_only":1},
+  {"fieldname":"grand_total","fieldtype":"Currency","label":"Grand Total","read_only":1,"in_list_view":1}
+ ],
+ "permissions": [],
+ "track_changes": 0
+}
