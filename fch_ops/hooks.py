@@ -3,7 +3,8 @@ app_title = "FCH Ops"
 app_publisher = "GreenRay / FCH"
 app_description = "GreenRay Operations and Five-Gate Sales Control Engine"
 app_email = "ops@greenrayleed.com"
-app_license = "GPL-3.0"
+app_license = "GPL-3.0-or-later"
+required_apps = ["erpnext"]
 
 # Lifecycle Hooks
 after_install = "fch_ops.setup.after_install"
@@ -19,6 +20,10 @@ doc_events = {
         "validate": "fch_ops.events.quotation.validate",
         "before_submit": "fch_ops.events.quotation.before_submit",
     },
+}
+
+doctype_js = {
+    "FCH Import Operation": "public/js/fch_import_operation.js",
 }
 
 # Roles
