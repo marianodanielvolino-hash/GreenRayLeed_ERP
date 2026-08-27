@@ -72,6 +72,7 @@ def configure_grl():
     seed_roles()
     seed_reference_data()
     ensure_market_accounting_dimension()
+    seed_demo_data()
 
 
 def seed_roles():
@@ -107,3 +108,165 @@ def ensure_market_accounting_dimension():
     dimension.document_type = "FCH Market"
     dimension.label = "Market"
     dimension.insert(ignore_permissions=True)
+
+
+def seed_demo_data():
+    """Seeds sample/demo master data for GRL Argentina and GRL LLC."""
+    # 1. Companies
+    companies = [
+        {"company_name": "GRL Argentina S.A.", "default_currency": "ARS", "country": "Argentina", "tax_id": "30-71999999-8"},
+        {"company_name": "GRL LLC", "default_currency": "USD", "country": "United States", "tax_id": "99-8887776"},
+    ]
+    for c in companies:
+        if not frappe.db.exists("Company", c["company_name"]):
+            try:
+                doc = frappe.new_doc("Company")
+                doc.company_name = c["company_name"]
+                doc.default_currency = c["default_currency"]
+                doc.country = c["country"]
+                doc.tax_id = c["tax_id"]
+                doc.insert(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Error creating demo company {c['company_name']}: {e}")
+
+    # 2. Warehouses
+    warehouses = [
+        {"warehouse_name": "Depósito Central Buenos Aires", "company": "GRL Argentina S.A.", "custom_fch_market": "Argentina"},
+        {"warehouse_name": "Miami Main Logistics Hub", "company": "GRL LLC", "custom_fch_market": "USA / Offshore"},
+    ]
+    for w in warehouses:
+        abbr = frappe.get_value("Company", w["company"], "abbr") or "GRL"
+        name = f"{w['warehouse_name']} - {abbr}"
+        if not frappe.db.exists("Warehouse", name):
+            try:
+                doc = frappe.new_doc("Warehouse")
+                doc.warehouse_name = w["warehouse_name"]
+                doc.company = w["company"]
+                doc.custom_fch_market = w["custom_fch_market"]
+                doc.insert(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Error creating demo warehouse {w['warehouse_name']}: {e}")
+
+    # 3. Item Group & Items
+    if not frappe.db.exists("Item Group", "LED Luminaires"):
+        try:
+            ig = frappe.new_doc("Item Group")
+            ig.item_group_name = "LED Luminaires"
+            ig.parent_item_group = "All Item Groups"
+            ig.insert(ignore_permissions=True)
+        except Exception:
+            pass
+
+    items = [
+        {
+            "item_code": "GRL-LED-HIGHBAY-200W",
+            "item_name": "Campana LED Industrial 200W HighBay",
+            "item_group": "LED Luminaires",
+            "stock_uom": "Nos",
+            "custom_led_family": "HighBay",
+            "custom_led_model": "HB-200W-PRO",
+            "custom_power_w": 200.0,
+            "custom_lumens": 32000.0,
+            "custom_cct_kelvin": "5000K",
+            "custom_cri": ">80",
+            "custom_ip_rating": "IP65",
+            "custom_voltage": "100-277V",
+            "custom_warranty_years": 5,
+            "custom_lead_time_days": 30,
+        },
+        {
+            "item_code": "GRL-LED-STREET-150W",
+            "item_name": "Luminaria Vial LED 150W StreetLight",
+            "item_group": "LED Luminaires",
+            "stock_uom": "Nos",
+            "custom_led_family": "StreetLight",
+            "custom_led_model": "SL-150W-ECO",
+            "custom_power_w": 150.0,
+            "custom_lumens": 22500.0,
+            "custom_cct_kelvin": "4000K",
+            "custom_cri": ">70",
+            "custom_ip_rating": "IP66",
+            "custom_voltage": "100-277V",
+            "custom_warranty_years": 5,
+            "custom_lead_time_days": 45,
+        },
+    ]
+
+    for it in items:
+        if not frappe.db.exists("Item", it["item_code"]):
+            try:
+                doc = frappe.new_doc("Item")
+                doc.update(it)
+                doc.insert(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Error creating demo item {it['item_code']}: {e}")
+
+    # 4. Customers & Suppliers
+    customers = [
+        {"customer_name": "Distribuidora Iluminación S.A.", "customer_group": "All Customer Groups", "territory": "Argentina"},
+        {"customer_name": "Caribbean Energy Solutions Inc.", "customer_group": "All Customer Groups", "territory": "United States"},
+    ]
+    for cust in customers:
+        if not frappe.db.exists("Customer", cust["customer_name"]):
+            try:
+                doc = frappe.new_doc("Customer")
+                doc.update(cust)
+                doc.insert(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Error creating demo customer {cust['customer_name']}: {e}")
+
+    suppliers = [
+        {"supplier_name": "Shenzhen GreenRay Tech Co. Ltd.", "supplier_group": "All Supplier Groups", "country": "China"},
+    ]
+    for sup in suppliers:
+        if not frappe.db.exists("Supplier", sup["supplier_name"]):
+            try:
+                doc = frappe.new_doc("Supplier")
+                doc.update(sup)
+                doc.insert(ignore_permissions=True)
+            except Exception as e:
+                frappe.log_error(f"Error creating demo supplier {sup['supplier_name']}: {e}")
+
+    # 5. Price List & Item Prices
+    price_lists = [
+        {"price_list_name": "Standard Selling GRL", "selling": 1, "currency": "USD"},
+        {"price_list_name": "Standard Buying GRL", "buying": 1, "currency": "USD"},
+    ]
+    for pl in price_lists:
+        if not frappe.db.exists("Price List", pl["price_list_name"]):
+            try:
+                doc = frappe.new_doc("Price List")
+                doc.update(pl)
+                doc.insert(ignore_permissions=True)
+            except Exception:
+                pass
+
+    item_prices = [
+        {"item_code": "GRL-LED-HIGHBAY-200W", "price_list": "Standard Selling GRL", "price_list_rate": 185.0, "currency": "USD"},
+        {"item_code": "GRL-LED-HIGHBAY-200W", "price_list": "Standard Buying GRL", "price_list_rate": 95.0, "currency": "USD"},
+        {"item_code": "GRL-LED-STREET-150W", "price_list": "Standard Selling GRL", "price_list_rate": 145.0, "currency": "USD"},
+        {"item_code": "GRL-LED-STREET-150W", "price_list": "Standard Buying GRL", "price_list_rate": 72.0, "currency": "USD"},
+    ]
+    for ip in item_prices:
+        if not frappe.db.exists("Item Price", {"item_code": ip["item_code"], "price_list": ip["price_list"]}):
+            try:
+                doc = frappe.new_doc("Item Price")
+                doc.update(ip)
+                doc.insert(ignore_permissions=True)
+            except Exception:
+                pass
+
+    # 6. Compliance Requirement Sample
+    if not frappe.db.exists("FCH Compliance Requirement", {"destination_country": "Argentina", "item": "GRL-LED-HIGHBAY-200W"}):
+        try:
+            req = frappe.new_doc("FCH Compliance Requirement")
+            req.destination_country = "Argentina"
+            req.item = "GRL-LED-HIGHBAY-200W"
+            req.requirement_type = "Certification"
+            req.title = "Certificado Seguridad Eléctrica (IRAM / TUV)"
+            req.status = "Approved"
+            req.mandatory = 1
+            req.insert(ignore_permissions=True)
+        except Exception:
+            pass
+
