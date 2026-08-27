@@ -1,0 +1,20 @@
+{
+ "doctype": "DocType",
+ "name": "FCH Import Charge",
+ "module": "FCH Ops",
+ "istable": 1,
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": ["charge_type", "description", "expense_account", "currency", "amount", "exchange_rate", "amount_company_currency"],
+ "fields": [
+  {"fieldname":"charge_type","fieldtype":"Select","label":"Charge Type","options":"Freight\nInsurance\nDuty\nCustoms / Broker\nLocal Freight\nOther","reqd":1,"in_list_view":1},
+  {"fieldname":"description","fieldtype":"Data","label":"Description","reqd":1,"in_list_view":1},
+  {"fieldname":"expense_account","fieldtype":"Link","options":"Account","label":"Expense Account","reqd":1,"in_list_view":1},
+  {"fieldname":"currency","fieldtype":"Link","options":"Currency","label":"Currency","reqd":1},
+  {"fieldname":"amount","fieldtype":"Currency","label":"Amount","options":"currency","reqd":1,"in_list_view":1},
+  {"fieldname":"exchange_rate","fieldtype":"Float","label":"Exchange Rate to Company Currency","default":1,"reqd":1},
+  {"fieldname":"amount_company_currency","fieldtype":"Currency","label":"Amount (Company Currency)","read_only":1,"in_list_view":1}
+ ],
+ "permissions": [],
+ "track_changes": 0
+}
