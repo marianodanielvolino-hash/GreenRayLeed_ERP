@@ -1,44 +1,69 @@
-# GreenRay ERP — `fch_ops`
+# FCH Ops — GreenRay / GRL
 
-Aplicación propia para extender ERPNext v16 sin modificar el core.
+Custom Frappe app for the GreenRay regional operating model on ERPNext v16.
 
-## Alcance incluido
+## Frappe Cloud target
 
-- Modelo regional Company ≠ Market.
-- CASE-ID (`FCH Case`) y Decision Log (`FCH Decision`).
-- Five Gate Engine para Sales Order: Comercial, Stock, Compliance, Finanzas y Logística.
-- Compliance por SKU + país.
-- Operaciones de importación / COMEX y landed cost operativo.
-- Registro de contratos y alertas de vencimiento.
-- Mapping SKU global ↔ SKU local/proveedor por país.
-- Gestión de cobranzas con próxima acción.
-- Campos técnicos para productos LED.
-- Campos operativos para cotizaciones, compras, depósitos y proyectos.
-- Accounting Dimension `FCH Market`.
-- Workspace `FCH Ops`.
+Target site:
 
-## Base soportada
+`https://conscienciahumana.l.frappe.cloud`
 
-- ERPNext: rama `version-16`, fijar siempre una release estable.
-- Frappe: >=16.21.0,<17.0.0.
-- Python: >=3.14.
+This branch is intentionally app-only so Frappe Cloud sees `pyproject.toml` at repository root.
 
-## Instalación sobre un bench existente
+Repository:
 
-```bash
-cd ~/frappe-bench
-bench get-app /ruta/al/repositorio/fch_ops
-bench --site <sitio> install-app fch_ops
-bench --site <sitio> migrate
-bench restart
-```
+`https://github.com/marianodanielvolino-hash/GreenRayLeed_ERP.git`
 
-La app crea roles, mercados, la dimensión contable `FCH Market`, campos personalizados y configuraciones base de manera idempotente.
+Branch:
 
-## Importante sobre las compañías
+`frappe-cloud-v16`
 
-El blueprint define siete sociedades, pero faltan datos legales/fiscales y planes de cuentas definitivos. Por seguridad, la app **no crea automáticamente las Company**. Se incluye `data/companies_seed.csv` con la estructura propuesta para cargarlas cuando se confirme cada alta.
+## Required runtime
 
-## Datos aún pendientes de migración
+- Frappe v16 (`>=16.21.0,<17.0.0`)
+- ERPNext v16 installed on the site
+- HRMS and Frappe CRM are recommended for the GRL operating model
+- Private Bench is required for this custom app on Frappe Cloud
 
-Las plantillas CSV están en `data/templates/` y cubren productos, clientes, proveedores, stock, cotizaciones/pedidos abiertos, compras, embarques, CxC y CxP.
+## GRL post-install behavior
+
+The app creates/seeds:
+
+- FCH Market records: Argentina, Chile, Puerto Rico, Costa Rica, Mexico, Uruguay, USA / Offshore
+- GRL operational roles
+- Market as an ERPNext Accounting Dimension
+- LED master-data fields on Item
+- Market context on Warehouse, Sales Order, Purchase Order and Project
+- Pricing approval fields on Quotation
+- Five Gate controls on Sales Order
+- Compliance, Cases, Decisions, Contracts and Collections
+- COMEX Import Operation with Purchase Receipt loading and draft Landed Cost Voucher generation
+
+The app does **not** auto-create legal Companies, tax IDs, charts of accounts, bank accounts, customers, suppliers, stock or opening balances. Those require validated GRL data.
+
+## Frappe Cloud install sequence
+
+1. Confirm target site is on Frappe v16.
+2. Confirm the site is on a Private Bench. If it is on a shared/public bench, move it to a Private Bench first.
+3. On the Bench Group, add this repository as a custom app using branch `frappe-cloud-v16`.
+4. Grant the Frappe Cloud GitHub App access to this repository if requested.
+5. Deploy/Update the Bench Group.
+6. On the Site > Apps, install `fch_ops`.
+7. Run site migration/update through Frappe Cloud.
+8. Verify the site lists `frappe`, `erpnext`, and `fch_ops`. Install `hrms` and `crm` if they are not already present and are wanted for the pilot.
+
+## GRL acceptance checks
+
+- `FCH Market` contains seven regional markets.
+- `Accounting Dimension` contains `Market` referencing `FCH Market`.
+- Sales Order shows Five Gate Status and Gate Checks.
+- A Sales Order cannot submit when a mandatory gate is NO GO.
+- Item exposes LED technical fields.
+- Quotation exposes margin and pricing approval fields.
+- FCH Import Operation can load submitted Purchase Receipts from a Purchase Order.
+- FCH Import Operation can create a **draft** ERPNext Landed Cost Voucher from reviewed charges and expense accounts.
+- Compliance Requirement can block destination-country readiness when mandatory evidence is expired/missing.
+
+## Pilot scope
+
+Configure first with validated data for GRL Argentina + GRL LLC. Do not create fiscal settings until the corresponding accountant validates chart of accounts, tax IDs and statutory configuration.
