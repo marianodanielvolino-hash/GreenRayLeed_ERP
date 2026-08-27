@@ -43,32 +43,67 @@ CUSTOM_FIELDS = {
         {"fieldname": "fch_market", "fieldtype": "Link", "options": "FCH Market", "label": "FCH Market", "insert_after": "company"},
         {"fieldname": "custom_lead_time_days", "fieldtype": "Int", "label": "Lead Time (Days)", "insert_after": "fch_market"},
     ],
+    "FCH Import Operation": [
+        {"fieldname": "custom_receipts", "fieldtype": "Table", "options": "FCH Import Receipt", "label": "Submitted Purchase Receipts", "insert_after": "purchase_order"},
+        {"fieldname": "custom_charges", "fieldtype": "Table", "options": "FCH Import Charge", "label": "Landed Cost Charges", "insert_after": "custom_receipts"},
+        {"fieldname": "custom_lcv_distribution_basis", "fieldtype": "Select", "options": "Qty\nAmount", "default": "Amount", "label": "LCV Distribution Basis", "insert_after": "custom_charges"},
+    ],
 }
+
+GRL_ROLES = [
+    "FCH Direction", "FCH PMO", "FCH Finance Manager", "FCH Treasury",
+    "FCH Sales", "FCH Purchasing", "FCH Supply", "FCH Warehouse",
+    "FCH COMEX", "FCH Country Manager", "FCH Auditor",
+]
+
+MARKETS = ["Argentina", "Chile", "Puerto Rico", "Costa Rica", "Mexico", "Uruguay", "USA / Offshore"]
 
 
 def after_install():
-    create_custom_fields(CUSTOM_FIELDS, ignore_validate=True)
-    seed_reference_data()
+    configure_grl()
 
 
 def after_migrate():
+    configure_grl()
+
+
+def configure_grl():
     create_custom_fields(CUSTOM_FIELDS, ignore_validate=True)
+    seed_roles()
     seed_reference_data()
+    ensure_market_accounting_dimension()
+
+
+def seed_roles():
+    for role_name in GRL_ROLES:
+        if not frappe.db.exists("Role", role_name):
+            role = frappe.new_doc("Role")
+            role.role_name = role_name
+            role.desk_access = 1
+            role.insert(ignore_permissions=True)
 
 
 def seed_reference_data():
-    # Seed FCH Markets if empty
-    markets = ["Argentina", "Chile", "Puerto Rico", "Costa Rica", "Mexico", "Uruguay", "USA / Offshore"]
-    for m in markets:
-        if not frappe.db.exists("FCH Market", m):
+    for market in MARKETS:
+        if not frappe.db.exists("FCH Market", market):
             doc = frappe.new_doc("FCH Market")
-            doc.market_name = m
-            doc.name = m
+            doc.market_name = market
+            doc.name = market
             doc.insert(ignore_permissions=True)
 
-    # Ensure FCH Settings single doc exists
     if not frappe.db.exists("FCH Settings", "FCH Settings"):
         settings = frappe.new_doc("FCH Settings")
         settings.enforce_five_gates = 1
         settings.default_minimum_margin_percent = 25.0
         settings.insert(ignore_permissions=True)
+
+
+def ensure_market_accounting_dimension():
+    if not frappe.db.exists("DocType", "Accounting Dimension"):
+        return
+    if frappe.db.exists("Accounting Dimension", {"document_type": "FCH Market"}):
+        return
+    dimension = frappe.new_doc("Accounting Dimension")
+    dimension.document_type = "FCH Market"
+    dimension.label = "Market"
+    dimension.insert(ignore_permissions=True)
